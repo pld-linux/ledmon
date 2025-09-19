@@ -5,7 +5,7 @@
 Summary:	Enclosure LED Utilities
 Name:		ledmon
 Version:	1.1.0
-Release:	1
+Release:	2
 License:	GPL v2.0 AND LGPL v2.1
 Group:		Libraries
 Source0:	https://github.com/intel/ledmon/archive/v%{version}/%{name}-%{version}.tar.gz
@@ -28,40 +28,39 @@ are two types of system: 2-LED system (Activity LED, Status LED) and
 privileges to use this application.
 
 %package -n libled
-Summary:	Common files for %{name} library
-Summary(pl.UTF-8):	Wspólne pliki biblioteki %{name}
+Summary:	Common files for libled library
+Summary(pl.UTF-8):	Wspólne pliki biblioteki libled
 Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
 
 %description -n libled
-Common files for %{name} library.
+Common files for libled library.
 
 %description -n libled -l pl.UTF-8
-Wspólne pliki biblioteki %{name}.
+Wspólne pliki biblioteki libled.
 
 %package -n libled-devel
-Summary:	Header files for %{name} library
-Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki %{name}
+Summary:	Header files for libled library
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki libled
 Group:		Development/Libraries
-Requires:	%{name} = %{version}-%{release}
+Requires:	libled = %{version}-%{release}
 
 %description -n libled-devel
-Header files for %{name} library.
+Header files for libled library.
 
 %description -n libled-devel -l pl.UTF-8
-Pliki nagłówkowe biblioteki %{name}.
+Pliki nagłówkowe biblioteki libled.
 
 %package -n libled-static
-Summary:	Static %{name} library
-Summary(pl.UTF-8):	Statyczna biblioteka %{name}
+Summary:	Static libled library
+Summary(pl.UTF-8):	Statyczna biblioteka libled
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}-%{release}
+Requires:	libled-devel = %{version}-%{release}
 
 %description -n libled-static
-Static %{name} library.
+Static libled library.
 
 %description -n libled-static -l pl.UTF-8
-Statyczna biblioteka %{name}.
+Statyczna biblioteka libled.
 
 %prep
 %setup -q
