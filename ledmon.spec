@@ -3,14 +3,16 @@
 %bcond_without	static_libs	# static libraries
 #
 Summary:	Enclosure LED Utilities
+Summary(pl.UTF-8):	Narzędzia do diod LED na obudowie
 Name:		ledmon
 Version:	1.1.0
 Release:	2
-License:	GPL v2.0 AND LGPL v2.1
+License:	GPL v2.0, LGPL v2.1
 Group:		Libraries
-Source0:	https://github.com/intel/ledmon/archive/v%{version}/%{name}-%{version}.tar.gz
+#Source0Download: https://github.com/md-raid-utilities/ledmon/releases
+Source0:	https://github.com/md-raid-utilities/ledmon/archive/v%{version}/%{name}-%{version}.tar.gz
 # Source0-md5:	5cd888ac13b9afe1dae11d421bd8e17d
-URL:		https://github.com/intel/ledmon
+URL:		https://github.com/md-raid-utilities/ledmon
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libtool
@@ -27,16 +29,24 @@ are two types of system: 2-LED system (Activity LED, Status LED) and
 3-LED system (Activity LED, Locate LED, Fail LED). User must have root
 privileges to use this application.
 
+%description -l pl.UTF-8
+ledmon i ledctl to aplikacje przestrzeni użytkownika, stworzone do
+sterowania diodami LED związanymi z poszczególnymi gniazdami w
+obudowie lub kieszeniach na dyski. Istnieją dwa rodzaje systemów:
+2-diodowy (diody aktywności i stanu) oraz 3-diodowy (dody aktywności,
+lokalizacji i awarii). Użytkownicy muszą mieć uprawnienia
+administratora.
+
 %package -n libled
-Summary:	Common files for libled library
-Summary(pl.UTF-8):	Wspólne pliki biblioteki libled
+Summary:	Shared libled library
+Summary(pl.UTF-8):	Biblioteka współdzielona libled
 Group:		Libraries
 
 %description -n libled
-Common files for libled library.
+Shared libled library.
 
 %description -n libled -l pl.UTF-8
-Wspólne pliki biblioteki libled.
+Biblioteka współdzielona libled.
 
 %package -n libled-devel
 Summary:	Header files for libled library
@@ -75,12 +85,12 @@ Statyczna biblioteka libled.
 	--enable-systemd \
 	--enable-library \
 	%{!?with_static_libs:--disable-static}
-%{__make} V=1
+
+%{__make} \
+	V=1
 
 %install
 rm -rf $RPM_BUILD_ROOT
-# create directories if necessary
-#install -d $RPM_BUILD_ROOT
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -99,8 +109,8 @@ rm -rf $RPM_BUILD_ROOT
 %postun
 %systemd_postun_with_restart ledmon.service
 
-%post -n libled -p /sbin/ldconfig
-%postun -n libled -p /sbin/ldconfig
+%post	-n libled -p /sbin/ldconfig
+%postun	-n libled -p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
@@ -114,7 +124,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n libled
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libled.so.*.*.*
+%{_libdir}/libled.so.*.*.*
 %ghost %{_libdir}/libled.so.1
 
 %files -n libled-devel
