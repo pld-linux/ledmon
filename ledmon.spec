@@ -7,16 +7,21 @@ Summary(pl.UTF-8):	Narzędzia do diod LED na obudowie
 Name:		ledmon
 Version:	1.1.0
 Release:	2
-License:	GPL v2.0, LGPL v2.1
+License:	GPL v2.0, LGPL v2.1+
 Group:		Libraries
 #Source0Download: https://github.com/md-raid-utilities/ledmon/releases
 Source0:	https://github.com/md-raid-utilities/ledmon/archive/v%{version}/%{name}-%{version}.tar.gz
 # Source0-md5:	5cd888ac13b9afe1dae11d421bd8e17d
 URL:		https://github.com/md-raid-utilities/ledmon
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.69
 BuildRequires:	automake
-BuildRequires:	libtool
+BuildRequires:	libtool >= 2:2.4.2
+BuildRequires:	pciutils-devel
+BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 2.011
+BuildRequires:	sg3_utils-devel
+BuildRequires:	systemd-devel
+BuildRequires:	udev-devel
 Requires(post,preun,postun):	systemd-units >= 1:250.1
 Requires:	libled = %{version}-%{release}
 Requires:	systemd-units >= 1:250.1
@@ -40,6 +45,7 @@ administratora.
 %package -n libled
 Summary:	Shared libled library
 Summary(pl.UTF-8):	Biblioteka współdzielona libled
+License:	LGPL v2.1+
 Group:		Libraries
 
 %description -n libled
@@ -51,8 +57,10 @@ Biblioteka współdzielona libled.
 %package -n libled-devel
 Summary:	Header files for libled library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki libled
+License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	libled = %{version}-%{release}
+Requires:	sg3_utils-devel
 
 %description -n libled-devel
 Header files for libled library.
@@ -63,6 +71,7 @@ Pliki nagłówkowe biblioteki libled.
 %package -n libled-static
 Summary:	Static libled library
 Summary(pl.UTF-8):	Statyczna biblioteka libled
+License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	libled-devel = %{version}-%{release}
 
@@ -77,17 +86,17 @@ Statyczna biblioteka libled.
 
 %build
 %{__libtoolize}
-%{__aclocal}
+%{__aclocal} -I m4
 %{__autoconf}
 %{__autoheader}
 %{__automake}
 %configure \
-	--enable-systemd \
 	--enable-library \
-	%{!?with_static_libs:--disable-static}
+	--disable-silent-rules \
+	%{!?with_static_libs:--disable-static} \
+	--enable-systemd
 
-%{__make} \
-	V=1
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -96,6 +105,9 @@ rm -rf $RPM_BUILD_ROOT
 	DESTDIR=$RPM_BUILD_ROOT
 
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la
+
+# packaged as %doc
+%{__rm} $RPM_BUILD_ROOT%{_docdir}/ledmon/README.md
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -114,7 +126,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README.md
+%doc README.md security.md
 %attr(755,root,root) %{_sbindir}/ledctl
 %attr(755,root,root) %{_sbindir}/ledmon
 %{_mandir}/man5/ledmon.conf.5*
@@ -124,12 +136,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n libled
 %defattr(644,root,root,755)
+%doc CHANGELOG.md
 %{_libdir}/libled.so.*.*.*
 %ghost %{_libdir}/libled.so.1
 
 %files -n libled-devel
 %defattr(644,root,root,755)
-%doc CHANGELOG.md
+%doc src/lib/LIBRARY.md
 %{_libdir}/libled.so
 %{_includedir}/led
 %{_pkgconfigdir}/ledmon.pc
